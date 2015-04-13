@@ -188,7 +188,7 @@ def main():
     # Arguments:
     parser.add_argument('-r','--report',help='Return report',required=False,action='store_true' )
     parser.add_argument('-n','--nameChange',help='Change the Hostname to ...',required=False,default="")
-    parser.add_argument('-i','--ip',help='IP of device',required=False,default='10.254.0.51')
+    parser.add_argument('-i','--ip',help='Choose IP of device',required=False,default='10.254.0.51')
     parser.add_argument('-u,','--uploadconfig',help="Upload the config file",required=False,action='store_true')
     parser.add_argument('-p','--password',help="Set the password",required=False,default='admin')
 
