@@ -191,12 +191,18 @@ def main():
     parser.add_argument('-i','--ip',help='Choose IP of device',required=False,default='10.254.0.51')
     parser.add_argument('-u,','--uploadconfig',help="Upload the config file",required=False,action='store_true')
     parser.add_argument('-p','--password',help="Set the password",required=False,default='admin')
+    parser.add_argument('-s','--ssl',help='Set https',required=False,action='store_true')
 
     args = parser.parse_args()  # this variable is a dictionary of the arguments entered at the command line
 
+    ssl = ''
+
+    if args.ssl == True:
+        ssl = 's'
+
     #Create URLz - we will pass this to connect() functions
-    configURL = 'http://admin:' + args.password + '@' + args.ip + '/'
-    reportURL = "http://" + args.ip + "/cgi-bin/webif/system-info.sh"    
+    configURL = 'http' + ssl + '://admin:' + args.password + '@' + args.ip + '/'
+    reportURL = 'http' + ssl + '://' + args.ip + '/cgi-bin/webif/system-info.sh'
     print('\nDevice Connect URLs:\n')
     print(configURL)
     print(reportURL)
