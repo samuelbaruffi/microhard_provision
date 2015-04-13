@@ -81,13 +81,13 @@ class Reporter():
         productName = self.findValue(value[0])
         imei = self.findValue(value[1])
         hostName = self.findValue(value[2])
-        buildVersion = self.fo
+        buildVersion = self.findValue(value[3])
 
 
         print (value[0], ":", productName)
         print (value[1], ":", imei)
         print (value[2], ":", hostName)
-        print (value[3], ":", hostName)
+        print (value[3], ":", buildVersion)
       
             
 
@@ -188,7 +188,7 @@ class Configuration():
 # LoginTest().setUp().test_Login()
 
 
-def main33():
+def main2131():
     
     configURL = 'http://admin:admin@10.254.0.51'
     print(configURL)  # test
@@ -199,7 +199,7 @@ def main33():
 
 
 
-def main    ():
+def main():
     
     # create an ArgumentParser() Object (defined in the argparse library we imported)
     parser = argparse.ArgumentParser(description='Microhard Reporting and Configuation Utility')
@@ -216,11 +216,23 @@ def main    ():
     parser.add_argument('-n','--nameChange',help='Change the Hostname to ...',required=False,default="")
     parser.add_argument('-i','--ip',help='IP of device',required=False,default='10.254.0.51')
     parser.add_argument('-u,','--uploadconfig',help="Upload the config file",required=False,action='store_true')
+    parser.add_argument('-p','--password',help="Set the password",required=False,default='admin')
+
 
 
     args = parser.parse_args()  # this variable is a dictionary of the arguments entered at the command line
 
     print(args.report)
+    
+    if args.uploadconfig == True:
+        file = './StaticIpConfig.xml'
+        configURL = 'http://admin:admin@' + args.ip + '/'
+        
+        siteUpload = Configuration()
+        siteUpload.connect(configURL,)
+        siteUpload.uploadConfigurationFile(file)
+        siteUpload.tearDown()
+        
 
     if args.report == True:  # If report (-r) arg was given, then return a report
         #Create URL for reporting  - we will pass this to connect() function in Reporter class
@@ -236,7 +248,7 @@ def main    ():
     print("done report")  #test    
 
     if args.nameChange != "":
-        configURL = 'http://admin:admin@' + args.ip + '/'
+        configURL = 'http://admin:'+ args.password + '@' + args.ip + '/'
         print(configURL)  # test
 
         siteConfig = Configuration() # create a Configuration() object called siteConfig
