@@ -3,11 +3,12 @@
 # Microhard Configuration Script
 #
 # Usage:
-# -r            : produce a report
-# -n hostname   : change hostname to this name
-# -i ip address : use this ip address (default is 10.254.0.51)
-#
-#
+# -r              : produce a report
+# -n hostname     : change hostname to this name
+# -i ip address   : use this ip address (default is 10.254.0.19)
+# -u upload config: upload config file to microhard (default is ./)
+# -s ssl          : set ssl to http (https)
+# =p password     : password (default is admin)
 #
 ###################
 
