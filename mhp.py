@@ -13,19 +13,20 @@
 
 from selenium import webdriver
 from selenium.webdriver.support.ui import WebDriverWait
-
-from bs4 import BeautifulSoup
-import unittest
-import time
 from urllib.request import *
-import argparse
+from bs4 import BeautifulSoup
 from distutils.command.upload import upload
 from _ast import Try
 
+import time
+import argparse
+import json
 
-class Reporter():
+
+class Reporter():        # Class to report on a device
     
-    def connect(self, theurl, username='admin', password='admin'):
+    #Function to connect to a device using BeautifulSoup
+    def connect(self, theurl, password='admin'):
         
         passman = HTTPPasswordMgrWithDefaultRealm()
         # this creates a password manager
@@ -33,7 +34,7 @@ class Reporter():
 
         passman = HTTPPasswordMgrWithDefaultRealm()  # this creates a password manager
 
-        passman.add_password(None, theurl, username, password)
+        passman.add_password(None, theurl, 'admin', password)
         # because we have put None at the start it will always
         # use this username/password combination for  urls
         # for which `theurl` is a super-url
@@ -54,8 +55,16 @@ class Reporter():
         soup = BeautifulSoup(page)
         self.text = soup.get_text() 
 
+    #Function to generate a dictionary of information about the device
+    def getInfo(self):
+        values = ["Product Name","IMEI","Host Name","Build Version"]
+        
+        dict = {value: self.findValue(value) for value in values}
+        dict['Network'] = self.getNetworkStatus()
+        return(dict)
+
+    #Function to find to find the Network Status
     def getNetworkStatus(self):
-        #To find to find the Network Status
         counter = 0
         networkStatus = ''
         splitText = self.text.split('\n')
@@ -68,30 +77,11 @@ class Reporter():
                 
          #verify is result is unkown means not connected       
         if networkStatus == "Unknown":
-            print("Not Connected")
+            return('Not Connected')
         else:
-            print("Network is: " + networkStatus)
-        
+            return(networkStatus)
 
-    def getInfo(self):
-        #get Product Name and IMEI
-        value = ["Product Name","IMEI","Host Name","Build Version"]
-       
-
-        productName = self.findValue(value[0])
-        imei = self.findValue(value[1])
-        hostName = self.findValue(value[2])
-        buildVersion = self.findValue(value[3])
-
-
-        print (value[0], ":", productName)
-        print (value[1], ":", imei)
-        print (value[2], ":", hostName)
-        print (value[3], ":", buildVersion)
-      
-            
-
-    #function to find info 
+    #Function to grab info off a device 
     def findValue(self, text):
         result = ''
         splitText = self.text.split('\n')
@@ -102,9 +92,8 @@ class Reporter():
         return result
     
 
-        
-# class LoginTest(unittest.TestCase):
-class Configuration():
+
+class Configuration():   # Class to configure the device
 
     #f = open ('log.txt', 'a')
 
@@ -179,14 +168,6 @@ class Configuration():
         self.driver.quit()
     
     
-    
-    
-    
-# if __name__=='__main__':
-#      unittest.main()            
-
-# LoginTest().setUp().test_Login()
-
 
 def main2131():
     
@@ -204,52 +185,48 @@ def main():
     # create an ArgumentParser() Object (defined in the argparse library we imported)
     parser = argparse.ArgumentParser(description='Microhard Reporting and Configuation Utility')
     
-    
-    
-    # use the add_argument() function to add kinds of  arguments to the parser object
-#     parser.add_argument('-r','--report',help='Return report',required=False,action='store_true')
-#     parser.add_argument('-n','--nameChange',help='Change the Hostname to ...',required=False,default="")
-#     parser.add_argument('-i','--ip',help='IP of device',required=False,default='10.254.0.51')
-#     parser.add_argument('-u,','--uploadconfig',help="Upload the config file",required=True,default="")
-
+    # Arguments:
     parser.add_argument('-r','--report',help='Return report',required=False,action='store_true' )
     parser.add_argument('-n','--nameChange',help='Change the Hostname to ...',required=False,default="")
     parser.add_argument('-i','--ip',help='IP of device',required=False,default='10.254.0.51')
     parser.add_argument('-u,','--uploadconfig',help="Upload the config file",required=False,action='store_true')
     parser.add_argument('-p','--password',help="Set the password",required=False,default='admin')
 
-
-
     args = parser.parse_args()  # this variable is a dictionary of the arguments entered at the command line
 
-    print(args.report)
+    #Create URLz - we will pass this to connect() functions
+    configURL = 'http://admin:' + args.password + '@' + args.ip + '/'
+    reportURL = "http://" + args.ip + "/cgi-bin/webif/system-info.sh"    
+    print('\nDevice Connect URLs:\n')
+    print(configURL)
+    print(reportURL)
+    print('\n')
     
+
+    # -u
     if args.uploadconfig == True:
         file = './StaticIpConfig.xml'
-        configURL = 'http://admin:admin@' + args.ip + '/'
         
         siteUpload = Configuration()
         siteUpload.connect(configURL,)
         siteUpload.uploadConfigurationFile(file)
         siteUpload.tearDown()
-        
 
+        print('done upload')
+        
+    # -r
     if args.report == True:  # If report (-r) arg was given, then return a report
-        #Create URL for reporting  - we will pass this to connect() function in Reporter class
-        reportURL = "http://" + args.ip + "/cgi-bin/webif/system-info.sh"
-        print("Using this URL to connecto to the device:  " + reportURL  + "\n") # 
-
+        print('\nrunning report\n')
         siteReport = Reporter() # Create object from Reporter() class
-        siteReport.connect(reportURL) # Connect to URL
-        siteReport.getInfo()
-        siteReport.getNetworkStatus()
-        
-    print("\n\n\n")    
-    print("done report")  #test    
+        siteReport.connect(reportURL, args.password) # Connect to URL
+        report = siteReport.getInfo()
 
+        print(report)        
+        print("\ndone report\n")  #test    
+
+
+    # -n ____
     if args.nameChange != "":
-        configURL = 'http://admin:'+ args.password + '@' + args.ip + '/'
-        print(configURL)  # test
 
         siteConfig = Configuration() # create a Configuration() object called siteConfig
         siteConfig.connect(configURL) # connect to the configURL
