@@ -8,7 +8,7 @@
 # -i ip address   : use this ip address (default is 10.254.0.19)
 # -u upload config: upload config file to microhard (default is ./)
 # -s ssl          : set ssl to http (https)
-# =p password     : password (default is admin)
+# -p password     : password (default is admin)
 #
 ###################
 
@@ -189,7 +189,7 @@ def main():
     # Arguments:
     parser.add_argument('-r','--report',help='Return report',required=False,action='store_true' )
     parser.add_argument('-n','--nameChange',help='Change the Hostname to ...',required=False,default="")
-    parser.add_argument('-i','--ip',help='Choose IP of device',required=False,default='10.254.0.51')
+    parser.add_argument('-i','--ip',help='Choose IP of device',required=False,default='10.254.0.19')
     parser.add_argument('-u,','--uploadconfig',help="Upload the config file",required=False,action='store_true')
     parser.add_argument('-p','--password',help="Set the password",required=False,default='admin')
     parser.add_argument('-s','--ssl',help='Set https',required=False,action='store_true')
@@ -228,7 +228,8 @@ def main():
         siteReport.connect(reportURL, args.password) # Connect to URL
         report = siteReport.getInfo()
 
-        print(report)        
+        print(json.dumps(report))
+        
         print("\ndone report\n")  #test    
 
 
