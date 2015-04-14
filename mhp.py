@@ -1,3 +1,7 @@
+##################
+#
+# QUICK CHANGE
+#
 ###################
 #
 # Microhard Configuration Script
