@@ -1,7 +1,3 @@
-##################
-#
-# QUICK CHANGE
-#
 ###################
 #
 # Microhard Configuration Script
@@ -221,34 +217,37 @@ def main():
     if args.uploadconfig == True:
         file = './config.xml'
         
-        siteUpload = Configuration()
-        siteUpload.connect(configURL)
-        siteUpload.uploadConfigurationFile(file)
-        siteUpload.tearDown()
-
-        print('done upload')
+        try:
+            siteUpload = Configuration()
+            siteUpload.connect(configURL)
+            siteUpload.uploadConfigurationFile(file)
+            siteUpload.tearDown()
+            print('True')
+        except:
+            print('False')
         
     # -r
     if args.report == True:  # If report (-r) arg was given, then return a report
-        print('\nrunning report\n')
-        siteReport = Reporter() # Create object from Reporter() class
-        siteReport.connect(reportURL, args.password) # Connect to URL
-        report = siteReport.getInfo()
 
-        print(json.dumps(report))
-        
-        print("\ndone report\n")  #test    
-
+        try:
+            siteReport = Reporter() # Create object from Reporter() class
+            siteReport.connect(reportURL, args.password) # Connect to URL
+            report = siteReport.getInfo()
+            print(json.dumps(report))
+        except:
+            print('False')
 
     # -n ____
     if args.nameChange != "":
-
-        siteConfig = Configuration() # create a Configuration() object called siteConfig
-        siteConfig.connect(configURL) # connect to the configURL
-        siteConfig.setHostname(args.nameChange) # set the Hostname
-        siteConfig.tearDown() # close the session
-    
-    print("done script")
+        
+        try:
+            siteConfig = Configuration() # create a Configuration() object called siteConfig
+            siteConfig.connect(configURL) # connect to the configURL
+            siteConfig.setHostname(args.nameChange) # set the Hostname
+            siteConfig.tearDown() # close the session
+            print('True')
+        except:
+            print('False')
 
 if __name__=='__main__':main()
 
