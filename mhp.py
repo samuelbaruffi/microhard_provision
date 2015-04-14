@@ -8,7 +8,7 @@
 # -i ip address   : use this ip address (default is 10.254.0.19)
 # -u upload config: upload config file to microhard (default is ./)
 # -s ssl          : set ssl to http (https)
-# =p password     : password (default is admin)
+# -p password     : password (default is admin)
 #
 ###################
 
@@ -228,7 +228,8 @@ def main():
         siteReport.connect(reportURL, args.password) # Connect to URL
         report = siteReport.getInfo()
 
-        print(report)        
+        print(json.dumps(report))
+        
         print("\ndone report\n")  #test    
 
 
