@@ -10,6 +10,8 @@
 # -s ssl          : set ssl to http (https)
 # -p password     : password (default is admin)
 #
+# Ver 1.0 - April 2015 by Sam and Joh
+#
 ###################
 
 from selenium import webdriver
