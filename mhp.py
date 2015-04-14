@@ -219,10 +219,10 @@ def main():
 
     # -u
     if args.uploadconfig == True:
-        file = './StaticIpConfig.xml'
+        file = './config.xml'
         
         siteUpload = Configuration()
-        siteUpload.connect(configURL,)
+        siteUpload.connect(configURL)
         siteUpload.uploadConfigurationFile(file)
         siteUpload.tearDown()
 
