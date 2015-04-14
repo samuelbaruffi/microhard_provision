@@ -200,18 +200,12 @@ def main():
     args = parser.parse_args()  # this variable is a dictionary of the arguments entered at the command line
 
     ssl = ''
-
     if args.ssl == True:
         ssl = 's'
 
     #Create URLz - we will pass this to connect() functions
     configURL = 'http' + ssl + '://admin:' + args.password + '@' + args.ip + '/'
     reportURL = 'http' + ssl + '://' + args.ip + '/cgi-bin/webif/system-info.sh'
-    print('\nDevice Connect URLs:\n')
-    print(configURL)
-    print(reportURL)
-    print('\n')
-    
 
     # -u
     if args.uploadconfig == True:
