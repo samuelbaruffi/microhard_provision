@@ -30,7 +30,7 @@ import json
 class Reporter():        # Class to report on a device
     
     #Function to connect to a device using BeautifulSoup
-    def connect(self, theurl, password='admin'):
+    def connect(self, theurl, password, ssl):
         
         passman = HTTPPasswordMgrWithDefaultRealm()
         # this creates a password manager
@@ -43,7 +43,11 @@ class Reporter():        # Class to report on a device
         # use this username/password combination for  urls
         # for which `theurl` is a super-url
         
+	#if ssl == s:
+              
+        #else:
         authhandler = HTTPBasicAuthHandler(passman) # create the AuthHandler
+        
         opener = build_opener(authhandler)
         
         install_opener(opener)
@@ -213,23 +217,23 @@ def main():
         
         try:
             siteUpload = Configuration()
-            siteUpload.connect(configURL)
+            siteUpload.connect(configURL, ssl)
             siteUpload.uploadConfigurationFile(file)
             siteUpload.tearDown()
             print('True')
-        except:
-            print('False')
+        except Exception as e:
+            print(e)
         
     # -r
     if args.report == True:  # If report (-r) arg was given, then return a report
 
         try:
             siteReport = Reporter() # Create object from Reporter() class
-            siteReport.connect(reportURL, args.password) # Connect to URL
+            siteReport.connect(reportURL, args.password, ssl) # Connect to URL
             report = siteReport.getInfo()
             print(json.dumps(report))
-        except:
-            print('False')
+        except Exception as e:
+            print(e)
 
     # -n ____
     if args.nameChange != "":
@@ -240,8 +244,8 @@ def main():
             siteConfig.setHostname(args.nameChange) # set the Hostname
             siteConfig.tearDown() # close the session
             print('True')
-        except:
-            print('False')
+        except Exception as e:
+            print(e)
 
 if __name__=='__main__':main()
 
