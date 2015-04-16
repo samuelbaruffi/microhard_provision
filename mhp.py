@@ -134,7 +134,7 @@ class Configuration():   # Class to configure the device
         commitFieldElement.click()
     
     #Function to upload and upgrade firmware to a set that is open
-    def upgradeFirmware(self,firmware="firmware.bin"):
+    def upgradeFirmware(self,firmware="/Users/sambaruffi/git/microhard_provision/firmware.bin"):
         driver = self.driver
         print(firmware)
         #Move to Maintanence Page
@@ -221,8 +221,9 @@ def main():
             siteUpgrade.upgradeFirmware()
             siteUpgrade.tearDown()
             print('True')
-        except:
-            print('False')
+        except Exception as e:
+            print(e)
+            siteUpgrade.tearDown()
 
 
     # -u
@@ -237,7 +238,7 @@ def main():
             print('True')
         except Exception as e:
             print(e)
-        
+            siteUpload.tearDown()
     # -r
     if args.report == True:  # If report (-r) arg was given, then return a report
 
@@ -260,6 +261,7 @@ def main():
             print('True')
         except Exception as e:
             print(e)
+            siteConfig.tearDown()
 
 if __name__=='__main__':main()
 
