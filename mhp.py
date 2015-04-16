@@ -112,7 +112,6 @@ class Configuration():   # Class to configure the device
     def setHostname(self, name):
         driver = self.driver
         hostname=name
-        firmware = "/Users/sambaruffi/Downloads/IPn4G-v1_1_0-r1086-1.bin"
         
         #Change to the Settings tab in a Microhard
         settingButtonXpath = "//a[@href='/cgi-bin/webif/system-settings.sh']"
@@ -131,8 +130,9 @@ class Configuration():   # Class to configure the device
         commitFieldElement.click()
     
     #Function to upload and upgrade firmware to a set that is open
-    def upgradeFirmware(self):
+    def upgradeFirmware(self,firmware="firmware.bin"):
         driver = self.driver
+        print(firmware)
         #Move to Maintanence Page
         maintenanceButtonXpath = ".//*[@id='submenu']/li[5]/a"
         maintenanceButtonEle = WebDriverWait(driver, 10).until(lambda driver: driver.find_element_by_xpath(maintenanceButtonXpath))
@@ -196,7 +196,9 @@ def main():
     parser.add_argument('-u,','--uploadconfig',help="Upload the config file",required=False,action='store_true')
     parser.add_argument('-p','--password',help="Set the password",required=False,default='admin')
     parser.add_argument('-s','--ssl',help='Set https',required=False,action='store_true')
-
+    parser.add_argument('-f','--firmware',help='Upgrade Firmware',required='False',action='store_true')
+    
+    
     args = parser.parse_args()  # this variable is a dictionary of the arguments entered at the command line
 
     ssl = ''
@@ -206,6 +208,18 @@ def main():
     #Create URLz - we will pass this to connect() functions
     configURL = 'http' + ssl + '://admin:' + args.password + '@' + args.ip + '/'
     reportURL = 'http' + ssl + '://' + args.ip + '/cgi-bin/webif/system-info.sh'
+
+    # -f
+    if args.firmware == True:
+        try:
+            siteUpgrade = Configuration()
+            siteUpgrade.connect(configURL)
+            siteUpgrade.upgradeFirmware()
+            siteUpgrade.tearDown()
+            print('True')
+        except:
+            print('False')
+
 
     # -u
     if args.uploadconfig == True:
