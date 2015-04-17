@@ -34,19 +34,12 @@ class Reporter():        # Class to report on a device
     def connect(self, theurl, password, ssl):
         
         passman = HTTPPasswordMgrWithDefaultRealm()
-        # this creates a password manager
-
-
-        passman = HTTPPasswordMgrWithDefaultRealm()  # this creates a password manager
 
         passman.add_password(None, theurl, 'admin', password)
         # because we have put None at the start it will always
         # use this username/password combination for  urls
         # for which `theurl` is a super-url
         
-	#if ssl == s:
-              
-        #else:
         authhandler = HTTPBasicAuthHandler(passman) # create the AuthHandler
         
         opener = build_opener(authhandler)
@@ -74,13 +67,6 @@ class Reporter():        # Class to report on a device
         return(dict)
     
                 
-         #verify is result is unkown means not connected       
-        if networkStatus == "Unknown":
-            return('Not Connected')
-        else:
-            return(networkStatus)
-
-
     #Function to find to find the Network Status
     def getNetworkStatus(self):
         counter = 0
@@ -111,9 +97,8 @@ class Reporter():        # Class to report on a device
     
 
 
-class Configuration():   # Class to configure the device
 
-    #f = open ('log.txt', 'a')
+class Configuration():   # Class to configure the device
 
     #Function to return an open connection to a site in a browser
     def connect(self, site = 'http://admin:admin@10.254.0.19/'):
@@ -194,15 +179,6 @@ class Configuration():   # Class to configure the device
     
     
 
-def main2131():
-    
-    configURL = 'http://admin:admin@10.254.0.19'
-    print(configURL)  # test
-    siteConfig = Configuration() # create a Configuration() object called siteConfig
-    siteConfig.connect(configURL) # connect to the configURL
-    siteConfig.uploadConfigurationFile("/Users/sambaruffi/Desktop/IPsec_User_Guide.pdf")
-
-
 
 
 def main():
@@ -229,6 +205,8 @@ def main():
     #Create URLz - we will pass this to connect() functions
     configURL = 'http' + ssl + '://admin:' + args.password + '@' + args.ip + '/'
     reportURL = 'http' + ssl + '://' + args.ip + '/cgi-bin/webif/system-info.sh'
+
+
 
     # -f
     if args.firmware == True:
