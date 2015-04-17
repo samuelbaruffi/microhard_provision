@@ -66,7 +66,7 @@ class Reporter():        # Class to report on a device
 
     #Function to generate a dictionary of information about the device
     def getInfo(self):
-        values = ["Product Name","IMEI","Host Name","Build Version","SIM Number (ICCID)","Description"]
+        values = ["Product Name","IMEI","Host Name","Build Version","SIM Number (ICCID)","Description","Hardware Version","Software Version"]
         
         dict = {value: self.findValue(value) for value in values}
         dict['Network'] = self.getNetworkStatus()
