@@ -25,6 +25,7 @@ from _ast import Try
 import time
 import argparse
 import json
+from asyncio.tasks import sleep
 
 
 class Reporter():        # Class to report on a device
@@ -170,6 +171,10 @@ class Configuration():   # Class to configure the device
         uploadConfigConfirmButtonEle = WebDriverWait(driver, 10).until(lambda driver: driver.find_element_by_name("chkconfig"))
         uploadConfigConfirmButtonEle.click()
     
+        #Reconfirming the "Restor" button
+        uploadConfigRestoreButtonEle = WebDriverWait(driver, 10).until(lambda driver: driver.find_element_by_name("instconfig"))
+        uploadConfigRestoreButtonEle.click()
+        
         
     #Function to close the connection to site that is open                                                           
     def tearDown(self):
@@ -200,7 +205,7 @@ def main():
     parser.add_argument('-u,','--uploadconfig',help="Upload the config file",required=False,action='store_true')
     parser.add_argument('-p','--password',help="Set the password",required=False,default='admin')
     parser.add_argument('-s','--ssl',help='Set https',required=False,action='store_true')
-    parser.add_argument('-f','--firmware',help='Upgrade Firmware',required='False',action='store_true')
+    parser.add_argument('-f','--firmware',help='Upgrade Firmware',required=False,action='store_true')
     
     
     args = parser.parse_args()  # this variable is a dictionary of the arguments entered at the command line
@@ -228,17 +233,19 @@ def main():
 
     # -u
     if args.uploadconfig == True:
-        file = './config.xml'
-        
+        file = '/Users/sambaruffi/git/microhard_provision/IPn4G.config'
         try:
             siteUpload = Configuration()
-            siteUpload.connect(configURL, ssl)
+            siteUpload.connect(configURL)
             siteUpload.uploadConfigurationFile(file)
+            time.sleep(20)
             siteUpload.tearDown()
             print('True')
         except Exception as e:
             print(e)
-            siteUpload.tearDown()
+       
+            
+            
     # -r
     if args.report == True:  # If report (-r) arg was given, then return a report
 
