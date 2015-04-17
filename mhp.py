@@ -200,7 +200,7 @@ def main():
     parser.add_argument('-u,','--uploadconfig',help="Upload the config file",required=False,action='store_true')
     parser.add_argument('-p','--password',help="Set the password",required=False,default='admin')
     parser.add_argument('-s','--ssl',help='Set https',required=False,action='store_true')
-    parser.add_argument('-f','--firmware',help='Upgrade Firmware',required='False',action='store_true')
+    parser.add_argument('-f','--firmware',help='Upgrade Firmware',required=False,action='store_true')
     
     
     args = parser.parse_args()  # this variable is a dictionary of the arguments entered at the command line
