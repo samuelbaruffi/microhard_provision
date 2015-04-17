@@ -66,11 +66,20 @@ class Reporter():        # Class to report on a device
 
     #Function to generate a dictionary of information about the device
     def getInfo(self):
-        values = ["Product Name","IMEI","Host Name","Build Version"]
+        values = ["Product Name","IMEI","Host Name","Build Version","SIM Number (ICCID)","Description"]
         
         dict = {value: self.findValue(value) for value in values}
         dict['Network'] = self.getNetworkStatus()
+        dict['MAC Address'] = self.findValue("255.255.255.0")
         return(dict)
+    
+                
+         #verify is result is unkown means not connected       
+        if networkStatus == "Unknown":
+            return('Not Connected')
+        else:
+            return(networkStatus)
+
 
     #Function to find to find the Network Status
     def getNetworkStatus(self):
