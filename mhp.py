@@ -175,6 +175,9 @@ class Configuration():   # Class to configure the device
         uploadConfigRestoreButtonEle = WebDriverWait(driver, 10).until(lambda driver: driver.find_element_by_name("instconfig"))
         uploadConfigRestoreButtonEle.click()
         
+        #sleep 60 seconds to upload the file
+        time.sleep(60)
+        
         
     #Function to close the connection to site that is open                                                           
     def tearDown(self):
