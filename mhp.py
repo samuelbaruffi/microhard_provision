@@ -144,7 +144,7 @@ class Configuration():   # Class to configure the device
         commitFieldElement.click()
     
     #Function to upload and upgrade firmware to a set that is open
-    def upgradeFirmware(self,firmware="/Users/sambaruffi/git/microhard_provision/firmware.bin"):
+    def upgradeFirmware(self,firmware="/support/microhard/microhard_provision/firmware.bin"):
         driver = self.driver
         print(firmware)
         #Move to Maintanence Page
