@@ -245,7 +245,7 @@ def main():
 
     # -u
     if args.uploadconfig == True:
-        file = '/Users/sambaruffi/git/microhard_provision/IPn4G.config'
+        file = '/support/microhard/microhard_provision/IPn4G.config'
         try:
             siteUpload = Configuration()
             siteUpload.connect(configURL)
