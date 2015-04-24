@@ -8,6 +8,7 @@
 # -i ip address   : use this ip address (default is 10.254.0.19)
 # -u upload config: upload config file to microhard (default is ./)
 # -s ssl          : set ssl to http (https)
+# -f              : upgrade firmWARE
 # -p password     : password (default is admin)
 #
 # Ver 1.0 - April 2015 by Sam and John
@@ -127,7 +128,69 @@ class Configuration():   # Class to configure the device
         commitFieldXpath = "//a[@href='#'][@id='waitbox']"
         commitFieldElement = WebDriverWait(driver, 10).until(lambda driver: driver.find_element_by_xpath(commitFieldXpath))
         commitFieldElement.click()
-    
+  
+
+    def setDesc(self, name):
+        driver = self.driver
+        desc=name
+        
+        #Change to the Settings tab in a Microhard
+        settingButtonXpath = "//a[@href='/cgi-bin/webif/system-settings.sh']"
+        settingButtonEle = WebDriverWait(driver, 10).until(lambda driver: driver.find_element_by_xpath(settingButtonXpath))
+        settingButtonEle.click()
+        
+        #Change Hostname Field
+        hostnameFieldXpath = "//input[@name='description']"
+        hostanmeFieldElement = WebDriverWait(driver, 10).until(lambda driver: driver.find_element_by_xpath(hostnameFieldXpath))
+        hostanmeFieldElement.clear()
+        hostanmeFieldElement.send_keys(desc)
+        
+        #Submit the change, like a commit
+        commitFieldXpath = "//a[@href='#'][@id='waitbox']"
+        commitFieldElement = WebDriverWait(driver, 10).until(lambda driver: driver.find_element_by_xpath(commitFieldXpath))
+        commitFieldElement.click()
+
+
+    def setSSID(self, name):
+        driver = self.driver
+        ssid=name
+        
+        #Change to the Settings tab in a Microhard
+        settingButtonXpath = "//a[@href='/cgi-bin/webif/wireless-wlan0.sh']"
+        settingButtonEle = WebDriverWait(driver, 10).until(lambda driver: driver.find_element_by_xpath(settingButtonXpath))
+        settingButtonEle.click()
+        
+        #Change Hostname Field
+        hostnameFieldXpath = "//input[@name='ssid_0']"
+        hostanmeFieldElement = WebDriverWait(driver, 10).until(lambda driver: driver.find_element_by_xpath(hostnameFieldXpath))
+        hostanmeFieldElement.clear()
+        hostanmeFieldElement.send_keys(ssid)
+        
+        #Submit the change, like a commit
+        commitFieldXpath = "//a[@href='#'][@id='waitbox']"
+        commitFieldElement = WebDriverWait(driver, 10).until(lambda driver: driver.find_element_by_xpath(commitFieldXpath))
+        commitFieldElement.click()
+
+    def setRadiusID(self, name):
+        driver = self.driver
+        radiusID=name
+        
+        #Change to the Settings tab in a Microhard
+        settingButtonXpath = "//a[@href='/cgi-bin/webif/coova-chilli.sh']"
+        settingButtonEle = WebDriverWait(driver, 10).until(lambda driver: driver.find_element_by_xpath(settingButtonXpath))
+        settingButtonEle.click()
+        
+        #Change Hostname Field
+        hostnameFieldXpath = "//input[@name='coova_chilli_coova_nasid']"
+        hostanmeFieldElement = WebDriverWait(driver, 10).until(lambda driver: driver.find_element_by_xpath(hostnameFieldXpath))
+        hostanmeFieldElement.clear()
+        hostanmeFieldElement.send_keys(radiusID)
+        
+        #Submit the change, like a commit
+        commitFieldXpath = "//a[@href='#'][@id='waitbox']"
+        commitFieldElement = WebDriverWait(driver, 10).until(lambda driver: driver.find_element_by_xpath(commitFieldXpath))
+        commitFieldElement.click()
+
     #Function to upload and upgrade firmware to a set that is open
     def upgradeFirmware(self,firmware="/support/microhard/microhard_provision/firmware.bin"):
         driver = self.driver
@@ -189,13 +252,15 @@ def main():
     # Arguments:
     parser.add_argument('-r','--report',help='Return report',required=False,action='store_true' )
     parser.add_argument('-n','--nameChange',help='Change the Hostname to ...',required=False,default="")
+    parser.add_argument('-d','--descChange',help='Change the Description to ...',required=False,default="")
+    parser.add_argument('-S','--ssidChange',help='Change the SSID to ...',required=False,default="")
+    parser.add_argument('-I','--radiusIDChange',help='Change the Radius NAS ID to ...',required=False,default="")
     parser.add_argument('-i','--ip',help='Choose IP of device',required=False,default='10.254.0.19')
     parser.add_argument('-u,','--uploadconfig',help="Upload the config file",required=False,action='store_true')
     parser.add_argument('-p','--password',help="Set the password",required=False,default='admin')
     parser.add_argument('-s','--ssl',help='Set https',required=False,action='store_true')
     parser.add_argument('-f','--firmware',help='Upgrade Firmware',required=False,action='store_true')
-    
-    
+        
     args = parser.parse_args()  # this variable is a dictionary of the arguments entered at the command line
 
     ssl = ''
@@ -248,7 +313,6 @@ def main():
 
     # -n ____
     if args.nameChange != "":
-        
         try:
             siteConfig = Configuration() # create a Configuration() object called siteConfig
             siteConfig.connect(configURL) # connect to the configURL
@@ -258,6 +322,43 @@ def main():
         except Exception as e:
             print(e)
             siteConfig.tearDown()
+
+    # -d _____
+    if args.descChange != "":
+        try:
+            siteConfig = Configuration() # create a Configuration() object called siteConfig
+            siteConfig.connect(configURL) # connect to the configURL
+            siteConfig.setDesc(args.descChange) # set the Hostname
+            siteConfig.tearDown() # close the session
+            print('True')
+        except Exception as e:
+            print(e)
+            siteConfig.tearDown()
+
+    # -S ______
+    if args.ssidChange != "":
+        try:
+            siteConfig = Configuration() # create a Configuration() object called siteConfig
+            siteConfig.connect(configURL) # connect to the configURL
+            siteConfig.setSSID(args.ssidChange) # set the Hostname
+            siteConfig.tearDown() # close the session
+            print('True')
+        except Exception as e:
+            print(e)
+            siteConfig.tearDown()
+
+    # -I _____
+    if args.radiusIDChange != "":
+        try:
+            siteConfig = Configuration() # create a Configuration() object called siteConfig
+            siteConfig.connect(configURL) # connect to the configURL
+            siteConfig.setRadiusID(args.radiusIDChange) # set the Hostname
+            siteConfig.tearDown() # close the session
+            print('True')
+        except Exception as e:
+            print(e)
+            siteConfig.tearDown()
+
 
 if __name__=='__main__':main()
 
