@@ -140,10 +140,10 @@ class Configuration():   # Class to configure the device
         settingButtonEle.click()
         
         #Change Hostname Field
-        hostnameFieldXpath = "//input[@name='description']"
-        hostanmeFieldElement = WebDriverWait(driver, 10).until(lambda driver: driver.find_element_by_xpath(hostnameFieldXpath))
-        hostanmeFieldElement.clear()
-        hostanmeFieldElement.send_keys(desc)
+        fieldXpath = "//input[@name='description']"
+        fieldElement = WebDriverWait(driver, 10).until(lambda driver: driver.find_element_by_xpath(fieldXpath))
+        fieldElement.clear()
+        fieldElement.send_keys(desc)
         
         #Submit the change, like a commit
         commitFieldXpath = "//a[@href='#'][@id='waitbox']"
@@ -161,10 +161,10 @@ class Configuration():   # Class to configure the device
         settingButtonEle.click()
         
         #Change Hostname Field
-        hostnameFieldXpath = "//input[@name='ssid_0']"
-        hostanmeFieldElement = WebDriverWait(driver, 10).until(lambda driver: driver.find_element_by_xpath(hostnameFieldXpath))
-        hostanmeFieldElement.clear()
-        hostanmeFieldElement.send_keys(ssid)
+        ssidFieldXpath = "//*[@id='ssid_0']"
+        ssidFieldElement = WebDriverWait(driver, 10).until(lambda driver: driver.find_element_by_xpath(ssidFieldXpath))
+        ssidFieldElement.clear()
+        ssidFieldElement.send_keys(ssid)
         
         #Submit the change, like a commit
         commitFieldXpath = "//a[@href='#'][@id='waitbox']"
@@ -181,10 +181,10 @@ class Configuration():   # Class to configure the device
         settingButtonEle.click()
         
         #Change Hostname Field
-        hostnameFieldXpath = "//input[@name='coova_chilli_coova_nasid']"
-        hostanmeFieldElement = WebDriverWait(driver, 10).until(lambda driver: driver.find_element_by_xpath(hostnameFieldXpath))
-        hostanmeFieldElement.clear()
-        hostanmeFieldElement.send_keys(radiusID)
+        radiusIDFieldXpath = "//*[@id='coova_chilli_coova_nasid']"
+        radiusIDFieldElement = WebDriverWait(driver, 10).until(lambda driver: driver.find_element_by_xpath(radiusIDFieldXpath))
+        radiusIDFieldElement.clear()
+        radiusIDFieldElement.send_keys(radiusID)
         
         #Submit the change, like a commit
         commitFieldXpath = "//a[@href='#'][@id='waitbox']"
