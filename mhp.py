@@ -18,6 +18,7 @@
 
 from selenium import webdriver
 from selenium.webdriver.support.ui import WebDriverWait
+from selenium.webdriver.support import expected_conditions as EC
 from urllib.request import *
 from bs4 import BeautifulSoup
 from distutils.command.upload import upload
@@ -218,8 +219,10 @@ class Configuration():   # Class to configure the device
         upgradeButtonEle = WebDriverWait(driver, 10).until(lambda driver: driver.find_element_by_name("upgrade"))
         upgradeButtonEle.click()
         
+        element = WebDriverWait(driver, 600).until(EC.title_contains("Summary"))
+
         #sleep for 10 minutes while upgrade
-        time.sleep(600)
+        #time.sleep(600)
     
     #Function to upload configuration file
     def uploadConfigurationFile(self,configurationFilePath):
