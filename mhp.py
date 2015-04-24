@@ -155,6 +155,11 @@ class Configuration():   # Class to configure the device
         driver = self.driver
         ssid=name
         
+        #Change to the Wireless tab
+        wirelessButtonXpath = "Wireless"
+        wirelessElement = WebDriverWait(driver, 10).until(lambda driver: driver.find_element_by_link_text(wirelessButtonXpath))
+        wirelessElement.click()
+        
         #Change to the Settings tab in a Microhard
         settingButtonXpath = "//a[@href='/cgi-bin/webif/wireless-wlan0.sh']"
         settingButtonEle = WebDriverWait(driver, 10).until(lambda driver: driver.find_element_by_xpath(settingButtonXpath))
@@ -175,14 +180,19 @@ class Configuration():   # Class to configure the device
         driver = self.driver
         radiusID=name
         
+        #Change to the Wireless tab
+        wirelessButtonXpath = "Wireless"
+        wirelessElement = WebDriverWait(driver, 10).until(lambda driver: driver.find_element_by_link_text(wirelessButtonXpath))
+        wirelessElement.click()
+        
         #Change to the Settings tab in a Microhard
         settingButtonXpath = "//a[@href='/cgi-bin/webif/coova-chilli.sh']"
         settingButtonEle = WebDriverWait(driver, 10).until(lambda driver: driver.find_element_by_xpath(settingButtonXpath))
         settingButtonEle.click()
         
         #Change Hostname Field
-        radiusIDFieldXpath = "//*[@id='coova_chilli_coova_nasid']"
-        radiusIDFieldElement = WebDriverWait(driver, 10).until(lambda driver: driver.find_element_by_xpath(radiusIDFieldXpath))
+        radiusIDFieldXpath = "coova_chilli_coova_nasid"
+        radiusIDFieldElement = WebDriverWait(driver, 10).until(lambda driver: driver.find_element_by_name(radiusIDFieldXpath))
         radiusIDFieldElement.clear()
         radiusIDFieldElement.send_keys(radiusID)
         
