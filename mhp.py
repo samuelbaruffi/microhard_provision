@@ -36,7 +36,7 @@ from asyncio.tasks import sleep
 class Reporter():        # Class to report on a device
     
     #Function to connect to a device using BeautifulSoup
-    def connect(self, theurl, password, ssl):
+    def connect(self, theurl='http://10.254.0.99/', password='admin'):
         
         passman = HTTPPasswordMgrWithDefaultRealm()
 
@@ -57,11 +57,12 @@ class Reporter():        # Class to report on a device
         
         #pagehandle = urlopen(theurl)
         # authentication is now handled automatically for us
-        
-        page = urlopen(theurl).read()
+    
+    def loadPage(self, url):    
+        page = urlopen(url).read()
         self.soup = BeautifulSoup(page)
         self.text = self.soup.get_text() 
-
+        
     
 
     #Function to generate a dictionary of information about the device
@@ -74,7 +75,7 @@ class Reporter():        # Class to report on a device
         return(dict)
     
     def getInfoStatusWlan(self):
-        return(self.findValue('Station'))
+        return(self.soup.find('input', {'id': 'ssid_0'}).get('value'))
     
     def getInfoStatusHotspot(self):
         return(self.soup.find('input', {'id': "coova_chilli_coova_nasid"}).get('value'))
@@ -294,7 +295,7 @@ def main():
     #Create URLz - we will pass this to connect() functions
     configURL = 'http' + ssl + '://admin:' + args.password + '@' + args.ip + '/'
     reportURL = 'http' + ssl + '://' + args.ip + '/cgi-bin/webif/' 
-
+    baseURL = 'http://' + args.ip + '/'
 
 
     # -f
@@ -329,21 +330,23 @@ def main():
 
         try:
             siteReport = Reporter() # Create object from Reporter() class
+            siteReport.connect(baseURL)
+
             reportSysURL = reportURL + "system-info.sh"
-            siteReport.connect(reportSysURL, args.password, ssl) # Connect to URL System Info
+            reportWifiURL = reportURL + "wireless-wlan0.sh"
+            reportHotspotURL = reportURL + "coova-chilli.sh"
+
+            siteReport.loadPage(reportSysURL) # Load up System Info page
             report = siteReport.getInfoSys() #adds SysInfo to the dictionary
             
-            reportWifiURL = reportURL + "status-wlan.sh"
-            siteReportWifi = Reporter()
-            siteReportWifi.connect(reportWifiURL, args.password, ssl)
-            report["Wlan"] = siteReportWifi.getInfoStatusWlan() #adds Status Wlan dictionary
+            siteReport.loadPage(reportWifiURL) # Load up Wifi page
+            report["Wlan"] = siteReport.getInfoStatusWlan() #adds Status Wlan dictionary
             
-            reportHotspotURL = reportURL + "coova-chilli.sh"
-            siteReportHotspot = Reporter()
-            siteReportHotspot.connect(reportHotspotURL, args.password, ssl)
-            report["Radius Nas ID"] = siteReportHotspot.getInfoStatusHotspot() #adds Status Wlan dictionary
+            siteReport.loadPage(reportHotspotURL) # Load up Hotspot page
+            report["Radius Nas ID"] = siteReport.getInfoStatusHotspot() #adds Status Wlan dictionary
         
             print(json.dumps(report))
+
         except Exception as e:
             print(e)
 
@@ -394,7 +397,6 @@ def main():
         except Exception as e:
             print(e)
             siteConfig.tearDown()
-
 
 if __name__=='__main__':main()
 
