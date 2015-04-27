@@ -4,6 +4,7 @@ from selenium.webdriver.support import expected_conditions as EC
 import csv
 import os
 import re
+import binascii
 
 class configgerer():
     def connect(self, ip):
@@ -18,7 +19,7 @@ class configgerer():
         self.driver.quit()
 
     def checkMac(self):
-        print(self.driver.find_element_by_xpath("//div[@id='content']/div[3]/table[2]/tbody/tr[3]/td[4]").text)
+        return(self.driver.find_element_by_xpath("//div[@id='content']/div[3]/table[2]/tbody/tr[3]/td[4]").text)
         
     def checkFirmware(self):
         driver = self.driver
@@ -61,8 +62,10 @@ class database():
 
 
     def getDevice(self, mac):
-        print(mac)
-        m = re.sub(r':','',mac)
+        type(mac)
+        str(mac)
+        mac.decode("utf-8")
+        m = binascii.unhexlify(mac.replace(':',''))
         print(m) 
         print(self.book)
         dev = self.book[m]
