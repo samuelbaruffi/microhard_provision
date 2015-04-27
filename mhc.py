@@ -62,10 +62,7 @@ class database():
 
 
     def getDevice(self, mac):
-        type(mac)
-        str(mac)
-        mac.decode("utf-8")
-        m = binascii.unhexlify(mac.replace(':',''))
+        m = re.sub(r':','', mac)
         print(m) 
         print(self.book)
         dev = self.book[m]
@@ -81,11 +78,19 @@ def main():
     db.readFile()
     
     for ip in IPs:
+        online = false
+        
         device = configgerer()
         #device.checkUp(ip)
-        device.connect(ip)
+        
         #print(device.checkPing(ip))
-        MAC = device.checkMac()
+        while online == false:
+            try:
+                device.connect(ip)
+                MAC = device.checkMac()
+                online = true
+            except:
+                pass
         db.getDevice(MAC)
         device.tearDown()
 
