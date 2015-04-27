@@ -1,4 +1,4 @@
-###################
+		###################
 #
 # Microhard Configuration Script
 #
@@ -27,6 +27,7 @@ from bs4 import BeautifulSoup
 from distutils.command.upload import upload
 from _ast import Try
 
+import requests
 import time
 import argparse
 import json
@@ -60,8 +61,11 @@ class Reporter():        # Class to report on a device
     
     def loadPage(self, url):    
         page = urlopen(url).read()
+        r = requests.get(url)
+        p = r.content
         self.soup = BeautifulSoup(page)
-        self.text = self.soup.get_text() 
+        self.text = self.soup.get_text()
+        self.css = BeautifulSoup(p)
         
     
 
@@ -70,6 +74,7 @@ class Reporter():        # Class to report on a device
         values = ["Product Name","IMEI","Host Name","Build Version","SIM Number (ICCID)","Description","Hardware Version","Software Version"]
         
         dict = {value: self.findValue(value) for value in values}
+        #dict['IP Address'] = self.soup.select('.odd > td:nth-of-type(1)')
         dict['Network'] = self.getNetworkStatus()
         dict['MAC Address'] = self.findValue("255.255.255.0")
         return(dict)
