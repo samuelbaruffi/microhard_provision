@@ -207,6 +207,7 @@ def main():
     
     for ip in IPs:
         print("Loading IP : " + ip)
+
         device = configgerer()
         configURL = 'http://admin:admin@' + ip + '/'
         device.connect(configURL, ip)
@@ -227,12 +228,15 @@ def main():
         sleepee(80)
         device.tearDown()
 
+
+        device2 = configgerer()
+
                 # Connect to configured device
         configURL = 'http://admin:!Cm@fW5102@' + ip + ':8081/'
-        device.connect(configURL, ip)
+        device2.connect(configURL, ip)
 
         print("Checking MAC")
-        MAC = device.checkMac()
+        MAC = device2.checkMac()
         print("Device MAC : " + MAC)
         print("Loading settings for device")
         devinfo = db.getDevice(MAC)
@@ -242,29 +246,29 @@ def main():
 
                 # Hostname
         print("Settings Hostname to : " + devinfo["HOSTNAME"])
-        device.setHostname(devinfo["HOSTNAME"])
+        device2.setHostname(devinfo["HOSTNAME"])
         print("Hostname SET")
 
                 # Description
         print("Setting Desc to : " + devinfo["DESCRIPTION"])
-        device.setDesc(devinfo["DESCRIPTION"])
+        device2.setDesc(devinfo["DESCRIPTION"])
         sleepee(30)
         print("Desc SET")
 
                 # SSID
         print("Settings SSID to : " + devinfo["SSID"])
-        device.setSSID(devinfo["SSID"])
+        device2.setSSID(devinfo["SSID"])
         sleepee(80)
         print("SSID SET")
 
                 # NASID
         print("Setting NASID to : " + devinfo["NASID"])
-        device.setRadiusID(device["NASID"])
+        device2.setRadiusID(device["NASID"])
         print("NASID SET")
         sleepee(60)
 
         online = True
-        device.teardown()
+        device2.teardown()
                 #pass
             #except:
         #device.tearDown()
