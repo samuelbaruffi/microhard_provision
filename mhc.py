@@ -71,9 +71,9 @@ class configgerer():
         hostanmeFieldElement.send_keys(hostname)
         
         #Submit the change, like a commit
-        commitFieldXpath = "//a[@href='#'][@id='waitbox']"
-        commitFieldElement = WebDriverWait(driver, 10).until(lambda driver: driver.find_element_by_xpath(commitFieldXpath))
-        commitFieldElement.click()
+#         commitFieldXpath = "//a[@href='#'][@id='waitbox']"
+#         commitFieldElement = WebDriverWait(driver, 10).until(lambda driver: driver.find_element_by_xpath(commitFieldXpath))
+#         commitFieldElement.click()
 
     def setDesc(self, name):
         driver = self.driver
@@ -207,7 +207,6 @@ def main():
                 print("Checking MAC")
                 MAC = device.checkMac()
                 print("Device MAC : " + MAC)
-                online = True
                 print("Loading settings for device")
                 devinfo = db.getDevice(MAC)
                 print("Setting settings")
@@ -216,16 +215,20 @@ def main():
                 print("Hostname SET")               
                 print("Setting Desc to : " + devinfo["DESCRIPTION"])
                 device.setDesc(devinfo["DESCRIPTION"])
+                time.sleep(20)
                 print("Desc SET")
                 print("Settings SSID to : " + devinfo["SSID"])
                 device.setSSID(devinfo["SSID"])
+                time.sleep(40)
                 print("SSID SET")
                 print("Setting NASID to : " + devinfo["NASID"])
-                device.setRadiusID(device["NASID"])
+                device.setRadiusID(device["NASID"]
+                time.sleep(30)
                 print("NASID SET")
                 #device.uploadConfig()
                 
                 online = True
+                pass
             except:
                 #device.tearDown()
                 print("Sleeping for 120s")
