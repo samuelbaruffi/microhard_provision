@@ -21,6 +21,10 @@ class configgerer():
         self.driver.quit()
 
     def checkMac(self):
+        driver = self.driver
+        settingButtonXpath = "//a[@href='/cgi-bin/webif/system-info.sh']"
+        settingButtonEle = WebDriverWait(driver, 10).until(lambda driver: driver.find_element_by_xpath(settingButtonXpath))
+        settingButtonEle.click()
         return(self.driver.find_element_by_xpath("//div[@id='content']/div[3]/table[2]/tbody/tr[3]/td[4]").text)
 
     def checkFirmware(self):
