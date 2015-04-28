@@ -58,7 +58,7 @@ class configgerer():
         uploadConfigRestoreButtonEle.click()
 
 
-    def setHostname(self, name):
+    def setHostname(self, name, desc):
         driver = self.driver
         hostname=name
         
@@ -72,28 +72,26 @@ class configgerer():
         hostanmeFieldElement = WebDriverWait(driver, 10).until(lambda driver: driver.find_element_by_xpath(hostnameFieldXpath))
         hostanmeFieldElement.clear()
         hostanmeFieldElement.send_keys(hostname)
-        
-        #Submit the change, like a commit
-#         commitFieldXpath = "//a[@href='#'][@id='waitbox']"
-#         commitFieldElement = WebDriverWait(driver, 10).until(lambda driver: driver.find_element_by_xpath(commitFieldXpath))
-#         commitFieldElement.click()
 
-    def setDesc(self, name):
-        driver = self.driver
-        desc=name
-        print(desc)
-        print("Change to the Settings tab in a Microhard")
-        settingButtonXpath = "//a[@href='/cgi-bin/webif/system-settings.sh']"
-        settingButtonEle = WebDriverWait(driver, 10).until(lambda driver: driver.find_element_by_xpath(settingButtonXpath))
-        settingButtonEle.click()
-        
-        print("Change Hostname Field")
         fieldXpath = "//input[@name='description']"
         fieldElement = WebDriverWait(driver, 10).until(lambda driver: driver.find_element_by_xpath(fieldXpath))
         fieldElement.clear()
         fieldElement.send_keys(desc)
         
-        print("Submit the change, like a commit")
+        
+        #Submit the change, like a commit
+        commitFieldXpath = "//a[@href='#'][@id='waitbox']"
+        commitFieldElement = WebDriverWait(driver, 10).until(lambda driver: driver.find_element_by_xpath(commitFieldXpath))
+        commitFieldElement.click()
+
+    def setDesc(self, name):
+        driver = self.driver
+        desc=name
+        print(desc)
+        settingButtonXpath = "//a[@href='/cgi-bin/webif/system-settings.sh']"
+        settingButtonEle = WebDriverWait(driver, 10).until(lambda driver: driver.find_element_by_xpath(settingButtonXpath))
+        settingButtonEle.click()
+        
         commitFieldXpath = "//a[@href='#'][@id='waitbox']"
         commitFieldElement = WebDriverWait(driver, 10).until(lambda driver: driver.find_element_by_xpath(commitFieldXpath))
         commitFieldElement.click()
@@ -201,7 +199,7 @@ class database():
 
 def main():
     IPs = ["10.254.0.3"]
-#,"10.254.0.19","10.254.0.35","10.254.0.51","10.254.0.67","10.254.0.83","10.254.0.99","10.254.4.3","10.254.4.19","10.254.4.35","10.254.4.51","10.254.4.67","10.254.4.83","10.254.4.99"]
+#"10.254.0.19","10.254.0.35","10.254.0.51","10.254.0.67","10.254.0.83","10.254.0.99","10.254.4.3","10.254.4.19","10.254.4.35","10.254.4.51","10.254.4.67","10.254.4.83","10.254.4.99"]
     
     db = database()
     db.readFile()
@@ -209,21 +207,48 @@ def main():
     for ip in IPs:
         print("Loading IP : " + ip)
 
-        device = configgerer()
-        configURL = 'http://admin:admin@' + ip + '/'
-        device.connect(configURL, ip)
-        print(configURL)
-        print(device.checkMac())
-        firmware = device.checkFirmware()
-        print(firmware)
-        if firmware != "v1.1.0 build 1086-20150421-new-feature":
-            print("FIRMWARE FAIL!!!")
-            break
+        device2 = configgerer()
+        configURL = 'http://admin:!Cm@fW5102@' + ip + ':8081/'
+        device2.connect(configURL, ip)
 
-        print("Uploading Config file")
-        device.uploadConfig("/support/microhard/microhard_provision/FWConfig.config")
+        print("Checking MAC")
+        MAC = device2.checkMac()
+        print("Device MAC : " + MAC)
+        print("Loading settings for device")
+        devinfo = db.getDevice(MAC)
+
+
+        print("Setting settings")
+
+                # Hostname & Description
+        print("Settings Hostname to : " + devinfo["HOSTNAME"])
+        print("Setting Desc to : " + devinfo["DESCRIPTION"])
+        device2.setHostname(devinfo["HOSTNAME"], devinfo["DESCRIPTION"])
+        print("Hostname SET")
+
+        time.sleep(30)
+        print("Desc SET")
+
+                # SSID
+        print("Settings SSID to : " + devinfo["SSID"])
+        device2.setSSID(devinfo["SSID"])
         time.sleep(80)
-        device.tearDown()
+        print("SSID SET")
+
+                # NASID
+        print("Setting NASID to : " + devinfo["NASID"])
+        device2.setRadiusID(devinfo["NASID"])
+        print("NASID SET")
+        time.sleep(60)
+
+        device2.teardown()
+
+
+        #pass
+        #except:
+        #device.tearDown()
+        #pass
+
 
 
 
