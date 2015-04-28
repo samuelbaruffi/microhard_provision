@@ -8,10 +8,10 @@ import binascii
 import time
 
 class configgerer():
-    def connect(self, ip):
-        self.configURL = 'http://admin:admin@' + ip + '/'
-        print(self.configURL)
+    def connect(self, configURL, ip):
+        self.configURL = configURL
         self.ip = ip
+        print(self.configURL)
         p = webdriver.FirefoxProfile()
         p.set_preference('webdriver.log.file','/tmp/firefox_console')
         self.driver = webdriver.Firefox(p)
@@ -26,7 +26,7 @@ class configgerer():
     def checkFirmware(self):
         driver = self.driver
         maintenanceButtonXpath = ".//*[@id='submenu']/li[5]/a"
-        maintenanceButtonEle = WebDriverWait(driver, 10).until(lambda driver: driver.find_element_by_xpath(maintenanceButtonXpath))
+        maintenanceButtonEle = WebDriverWait(driver, 360).until(lambda driver: driver.find_element_by_xpath(maintenanceButtonXpath))
         maintenanceButtonEle.click()
         return(self.driver.find_element_by_xpath("//div[@id='content']/div/table[2]/tbody/tr[2]/td[4]").text)
 
@@ -34,7 +34,7 @@ class configgerer():
 
 
     def uploadConfig(self,configurationFilePath):
-        driver = self.driver.get(self.configURL)
+        driver = self.driver
         
         #go to Maintanence window
         maintenanceButtonXpath = ".//*[@id='submenu']/li[5]/a"
@@ -52,7 +52,6 @@ class configgerer():
         #Reconfirming the "Restor" button
         uploadConfigRestoreButtonEle = WebDriverWait(driver, 10).until(lambda driver: driver.find_element_by_name("instconfig"))
         uploadConfigRestoreButtonEle.click()
-        time.sleep(30)
 
 
     def setHostname(self, name):
@@ -166,6 +165,13 @@ class configgerer():
             cnt += 1
         return(up)
 
+def sleepee(value):
+    print("Waiting")
+    i = 0
+    while i != value: 
+        time.sleep(1)
+        print(".", end="")
+        i += 1
 
 
 class database():
@@ -187,6 +193,8 @@ class database():
 
 
 
+
+
 def main():
     IPs = ["10.254.0.3","10.254.0.19","10.254.0.35","10.254.0.51","10.254.0.67","10.254.0.83","10.254.0.99","10.254.4.3","10.254.4.19","10.254.4.35","10.254.4.51","10.254.4.67","10.254.4.83","10.254.4.99"]
     
@@ -196,49 +204,69 @@ def main():
     for ip in IPs:
         print("Loading IP : " + ip)
         device = configgerer()
-        #device.checkUp(ip)
-        
-        #print(device.checkPing(ip))
-        online = False
-        while online == False:
-            try:
-                print("Trying to Connect")
-                device.connect(ip)
-                print("Checking MAC")
-                MAC = device.checkMac()
-                print("Device MAC : " + MAC)
-                print("Loading settings for device")
-                devinfo = db.getDevice(MAC)
-                print("Setting settings")
-                print("Settings Hostname to : " + devinfo["HOSTNAME"])
-                device.setHostname(devinfo["HOSTNAME"])
-                print("Hostname SET")               
-                print("Setting Desc to : " + devinfo["DESCRIPTION"])
-                device.setDesc(devinfo["DESCRIPTION"])
-                time.sleep(20)
-                print("Desc SET")
-                print("Settings SSID to : " + devinfo["SSID"])
-                device.setSSID(devinfo["SSID"])
-                time.sleep(40)
-                print("SSID SET")
-                print("Setting NASID to : " + devinfo["NASID"])
-                device.setRadiusID(device["NASID"]
-                time.sleep(30)
-                print("NASID SET")
-                #device.uploadConfig()
-                
-                online = True
-                pass
-            except:
-                #device.tearDown()
-                print("Sleeping for 120s")
-                time.sleep(30)
-                print("Sleeping for 90s")
-                time.sleep(30)
-                print("Sleeping for 30s")
-                time.sleep(30)
-                pass
-            device.tearDown()
+        configURL = 'http://admin:admin@' + ip + '/'
+        device.connect(configURL, ip)
+        print(configURL)
+        firmware = device.checkFirmware()
+        print(firmware)
+        if firmware != "v1.1.0 build 1086-20150421-new-feature":
+            print("FIRMWARE FAIL!!!")
+            break
+        #online = False
+        #while online == False:
+            #try:
+        print("Trying to Connect")
+
+                # Connect & Upload config file
+        print("Uploading Config file")
+        device.uploadConfig("/support/microhard/microhard_provision/FWConfig.config")
+        sleepee(80)
+        device.tearDown()
+
+                # Connect to configured device
+        configURL = 'http://admin:!Cm@fW5102@' + ip + ':8081/'
+        device.connect(configURL, ip)
+
+        print("Checking MAC")
+        MAC = device.checkMac()
+        print("Device MAC : " + MAC)
+        print("Loading settings for device")
+        devinfo = db.getDevice(MAC)
+
+
+        print("Setting settings")
+
+                # Hostname
+        print("Settings Hostname to : " + devinfo["HOSTNAME"])
+        device.setHostname(devinfo["HOSTNAME"])
+        print("Hostname SET")
+
+                # Description
+        print("Setting Desc to : " + devinfo["DESCRIPTION"])
+        device.setDesc(devinfo["DESCRIPTION"])
+        sleepee(30)
+        print("Desc SET")
+
+                # SSID
+        print("Settings SSID to : " + devinfo["SSID"])
+        device.setSSID(devinfo["SSID"])
+        sleepee(80)
+        print("SSID SET")
+
+                # NASID
+        print("Setting NASID to : " + devinfo["NASID"])
+        device.setRadiusID(device["NASID"])
+        print("NASID SET")
+        sleepee(60)
+
+        online = True
+        device.teardown()
+                #pass
+            #except:
+        #device.tearDown()
+        #print("ERROR !!! SLEEPING FOR 30")
+        #sleepee(30)
+        #pass
 
 
 
