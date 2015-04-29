@@ -8,7 +8,7 @@ import csv
 import os
 import re
 import time
-import threading import Thread
+from threading import Thread
 
 
 class configgerer():
@@ -35,9 +35,12 @@ class configgerer():
     def getFirmware(self):
         driver = self.driver
         maintenanceButtonXpath = ".//*[@id='submenu']/li[5]/a"
-        maintenanceButtonEle = WebDriverWait(driver, 360).until(lambda driver: driver.find_element_by_xpath(maintenanceButtonXpath))
+        maintenanceButtonEle = WebDriverWait(driver, 10).until(lambda driver: driver.find_element_by_xpath(maintenanceButtonXpath))
         maintenanceButtonEle.click()
         return(self.driver.find_element_by_xpath("//div[@id='content']/div/table[2]/tbody/tr[2]/td[4]").text)
+
+    def checkPage(self):
+        print(WebDriverWait(self.driver, 10).until(EC.title_contains("Summary")))
 
     def uploadConfig(self,configurationFilePath):
         driver = self.driver
@@ -156,25 +159,7 @@ class configgerer():
         commitFieldElement.click()
 
 
-    def checkPage(self):
-        print(WebDriverWait(self.driver, 10).until(EC.title_contains("Summary")))
 
-    def checkPing(self, ip):
-        response = os.system("ping -W 1 -c 1 " + ip + " > /dev/null 2>&1")
-        if response == 0:
-            return True
-        else:
-            return False
-
-    def checkUp(self, ip):
-        cnt = 0
-        up = True
-        while cnt < 5:
-            up = self.checkPing(ip)
-            if up == False:
-                 break
-            cnt += 1
-        return(up)
 
 
 class databaser():
@@ -209,54 +194,73 @@ class logger():
 #class portListener(threading.Thread):
 
 def run(ip, db):
-    print("********  Loading IP : " + ip)
+    print("******** " + ip + " thread starting")
+    i = False
+    while i == False:
+        try:
+            print("******** " + ip + " loading")
 
-    configURL = 'http://admin:admin@' + ip + '/'
-    device = configgerer()
-    device.connect(configURL, ip)
-    firmware = device.getFirmware()
-    if firmware != "v1.1.0 build 1086-20150421-new-feature":
-        print(ip + " FIRMWARE FAIL!!!")
-        break
+            configURL = 'http://admin:admin@' + ip + '/'
+            device = configgerer()
+            device.connect(configURL, ip)
+            firmware = device.getFirmware()
+            print(ip + " " + firmware)
+            if firmware != "v1.1.0 build 1086-20150421-new-feature":
+                print("******** " + ip + " FIRMWARE FAIL!!!")
+                break
 
-    device.uploadConfig("/support/microhard/microhard_provision/FWConfig.config")
-    time.sleep(120)
-    time.sleep(120)
+            device.uploadConfig("/support/microhard/microhard_provision/FWConfig.config")
+            time.sleep(120)
+            time.sleep(120)
 
-    device.disconnect()
-
-
-    configURL = 'http://admin:!Cm@fW5102@' + ip + ':8081/'
-    device2 = configgerer()
-    device2.connect(configURL, ip)
-
-    MAC = device2.getMac()
-    devinfo = db.getDevice(MAC)
+            device.disconnect()
 
 
-            # Hostname & Description
-    device2.setHostname(devinfo["HOSTNAME"], devinfo["DESCRIPTION"])
-    time.sleep(30)
-            # SSID
-    device2.setSSID(devinfo["SSID"])
-    time.sleep(80)
-            # NASID
-    device2.setRadiusID(devinfo["NASID"])
-    time.sleep(60)
+            configURL = 'http://admin:!Cm@fW5102@' + ip + ':8081/'
+            device2 = configgerer()
+            device2.connect(configURL, ip)
 
-    device2.disconnect()
-    print("******** " ip + " complete.")
-    print("------------------------------------------------------------------------------")
+            MAC = device2.getMac()
+            devinfo = db.getDevice(MAC)
 
+
+                    # Hostname & Description
+            device2.setHostname(devinfo["HOSTNAME"], devinfo["DESCRIPTION"])
+            time.sleep(30)
+                    # SSID
+            device2.setSSID(devinfo["SSID"])
+            time.sleep(80)
+                    # NASID
+            device2.setRadiusID(devinfo["NASID"])
+            time.sleep(60)
+
+            device2.disconnect()
+            print("******** " + ip + " complete.")
+            print("------------------------------------------------------------------------------")
+            i = true
+        except:
+            print(" ... Retrying ... ")
+            #i = true
 
 
 
 
 def main():
-    IPs = ["10.254.0.3","10.254.0.19","10.254.0.35","10.254.0.51","10.254.0.67","10.254.0.83","10.254.0.99"]#"10.254.4.3","10.254.4.19","10.254.4.35","10.254.4.51","10.254.4.67","10.254.4.83","10.254.4.99"]    
+    IPs = ["10.254.0.3"]
+#,"10.254.0.19","10.254.0.35","10.254.0.51","10.254.0.67","10.254.0.83","10.254.0.99"]#"10.254.4.3","10.254.4.19","10.254.4.35","10.254.4.51","10.254.4.67","10.254.4.83","10.254.4.99"]    
+    ts = []
     db = databaser()
     db.readFile()
     for ip in IPs:
-        run(ip, db)
+        t = Thread(target=run, args=(ip, db))
+        ts.append(t)
+        t.start()
+    #for tr in ts:
+        
+
 
 if __name__=='__main__':main()
+
+
+
+
