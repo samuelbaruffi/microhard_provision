@@ -212,7 +212,7 @@ def main():
     db.readFile()
     
     for ip in IPs:
-        print("Loading IP : " + ip)
+        print("********  Loading IP : " + ip)
 
         device = configgerer()
         configURL = 'http://admin:admin@' + ip + '/'
@@ -227,12 +227,15 @@ def main():
 
         print("Uploading Config file")
         device.uploadConfig("/support/microhard/microhard_provision/FWConfig.config")
-        time.sleep(200)
+        print("File Uploaded. Sleep for 2 mins")
+        time.sleep(120)
+        print("Sleep for another 2 mins")
+        time.sleep(120)
+
         device.tearDown()
 
 
 
-        print("Loading IP : " + ip)
 
         device2 = configgerer()
         configURL = 'http://admin:!Cm@fW5102@' + ip + ':8081/'
@@ -245,7 +248,7 @@ def main():
         devinfo = db.getDevice(MAC)
 
 
-        print("Setting settings")
+        print("********* Setting settings")
 
                 # Hostname & Description
         print("Settings Hostname to : " + devinfo["HOSTNAME"])
@@ -269,7 +272,7 @@ def main():
         time.sleep(60)
 
         device2.tearDown()
-
+        print("------------------------------------------------------------------------------")
 
 if __name__=='__main__':main()
 
