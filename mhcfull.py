@@ -4,10 +4,10 @@ from selenium.webdriver.support import expected_conditions as EC
 import csv
 import os
 import re
-import binascii
 import time
 
 class configgerer():
+
     def connect(self, configURL, ip):
         self.configURL = configURL
         self.ip = ip
@@ -17,25 +17,22 @@ class configgerer():
         self.driver = webdriver.Firefox(p)
         self.driver.get(self.configURL)
 
-    def tearDown(self):
+    def disconnect(self):
         self.driver.quit()
 
-    def checkMac(self):
+    def getMac(self):
         driver = self.driver
         settingButtonXpath = "//a[@href='/cgi-bin/webif/system-info.sh']"
         settingButtonEle = WebDriverWait(driver, 10).until(lambda driver: driver.find_element_by_xpath(settingButtonXpath))
         settingButtonEle.click()
         return(self.driver.find_element_by_xpath("//div[@id='content']/div[3]/table[2]/tbody/tr[3]/td[4]").text)
 
-    def checkFirmware(self):
+    def getFirmware(self):
         driver = self.driver
         maintenanceButtonXpath = ".//*[@id='submenu']/li[5]/a"
         maintenanceButtonEle = WebDriverWait(driver, 360).until(lambda driver: driver.find_element_by_xpath(maintenanceButtonXpath))
         maintenanceButtonEle.click()
         return(self.driver.find_element_by_xpath("//div[@id='content']/div/table[2]/tbody/tr[2]/td[4]").text)
-
-
-
 
     def uploadConfig(self,configurationFilePath):
         driver = self.driver
@@ -53,7 +50,7 @@ class configgerer():
         uploadConfigConfirmButtonEle = WebDriverWait(driver, 10).until(lambda driver: driver.find_element_by_name("chkconfig"))
         uploadConfigConfirmButtonEle.click()
     
-        #Reconfirming the "Restor" button
+        #Reconfirming the "Restore" button
         uploadConfigRestoreButtonEle = WebDriverWait(driver, 10).until(lambda driver: driver.find_element_by_name("instconfig"))
         uploadConfigRestoreButtonEle.click()
 
@@ -174,16 +171,8 @@ class configgerer():
             cnt += 1
         return(up)
 
-def sleepee(value):
-    print("Waiting")
-    i = 0
-    while i != value: 
-        time.sleep(1)
-        print(".", end="")
-        i += 1
 
-
-class database():
+class databaser():
     def readFile(self):
        self.book = {}
        with open('FWP.csv') as csvfile:
@@ -200,7 +189,19 @@ class database():
         return dev
 
 
+class logger():
+    def openLog(self):
+        self.log = {}
 
+    def addToLog(self, type, item):
+        self.log[type] = item
+
+    def writeToLog(self):
+        self.log['MAC']
+
+
+
+def run():
 
 
 
@@ -208,8 +209,10 @@ def main():
     IPs = ["10.254.0.3","10.254.0.19","10.254.0.35","10.254.0.51","10.254.0.67","10.254.0.83","10.254.0.99"]
 #"10.254.4.3","10.254.4.19","10.254.4.35","10.254.4.51","10.254.4.67","10.254.4.83","10.254.4.99"]
     
-    db = database()
+    db = databaser()
     db.readFile()
+
+
     
     for ip in IPs:
         print("********  Loading IP : " + ip)
@@ -218,8 +221,8 @@ def main():
         configURL = 'http://admin:admin@' + ip + '/'
         device.connect(configURL, ip)
         print(configURL)
-        print(device.checkMac())
-        firmware = device.checkFirmware()
+        print(device.getMac())
+        firmware = device.getFirmware()
         print(firmware)
         if firmware != "v1.1.0 build 1086-20150421-new-feature":
             print("FIRMWARE FAIL!!!")
@@ -227,12 +230,12 @@ def main():
 
         print("Uploading Config file")
         device.uploadConfig("/support/microhard/microhard_provision/FWConfig.config")
-        print("File Uploaded. Sleep for 2 mins")
+        print("File Uploaded. Sleep for 2 mins.")
         time.sleep(120)
-        print("Sleep for another 2 mins")
+        print("Sleep for another 2 mins.")
         time.sleep(120)
 
-        device.tearDown()
+        device.disconnect()
 
 
 
@@ -242,7 +245,7 @@ def main():
         device2.connect(configURL, ip)
 
         print("Checking MAC")
-        MAC = device2.checkMac()
+        MAC = device2.getMac()
         print("Device MAC : " + MAC)
         print("Loading settings for device")
         devinfo = db.getDevice(MAC)
@@ -271,8 +274,10 @@ def main():
         print("NASID SET")
         time.sleep(60)
 
-        device2.tearDown()
+        device2.disconnect()
         print("------------------------------------------------------------------------------")
+
+
 
 if __name__=='__main__':main()
 
