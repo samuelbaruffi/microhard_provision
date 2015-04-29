@@ -217,64 +217,41 @@ def main():
     for ip in IPs:
         print("********  Loading IP : " + ip)
 
-        device = configgerer()
         configURL = 'http://admin:admin@' + ip + '/'
+        device = configgerer()
         device.connect(configURL, ip)
-        print(configURL)
-        print(device.getMac())
         firmware = device.getFirmware()
-        print(firmware)
         if firmware != "v1.1.0 build 1086-20150421-new-feature":
-            print("FIRMWARE FAIL!!!")
+            print(ip + " FIRMWARE FAIL!!!")
             break
 
-        print("Uploading Config file")
         device.uploadConfig("/support/microhard/microhard_provision/FWConfig.config")
-        print("File Uploaded. Sleep for 2 mins.")
         time.sleep(120)
-        print("Sleep for another 2 mins.")
         time.sleep(120)
 
         device.disconnect()
 
 
-
-
-        device2 = configgerer()
         configURL = 'http://admin:!Cm@fW5102@' + ip + ':8081/'
+        device2 = configgerer()
         device2.connect(configURL, ip)
 
-        print("Checking MAC")
         MAC = device2.getMac()
-        print("Device MAC : " + MAC)
-        print("Loading settings for device")
         devinfo = db.getDevice(MAC)
 
 
-        print("********* Setting settings")
-
                 # Hostname & Description
-        print("Settings Hostname to : " + devinfo["HOSTNAME"])
-        print("Setting Desc to : " + devinfo["DESCRIPTION"])
         device2.setHostname(devinfo["HOSTNAME"], devinfo["DESCRIPTION"])
-        print("Hostname SET")
-
         time.sleep(30)
-        print("Desc SET")
-
                 # SSID
-        print("Settings SSID to : " + devinfo["SSID"])
         device2.setSSID(devinfo["SSID"])
         time.sleep(80)
-        print("SSID SET")
-
                 # NASID
-        print("Setting NASID to : " + devinfo["NASID"])
         device2.setRadiusID(devinfo["NASID"])
-        print("NASID SET")
         time.sleep(60)
 
         device2.disconnect()
+        print("******** " ip + " complete.")
         print("------------------------------------------------------------------------------")
 
 
