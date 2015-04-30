@@ -8,18 +8,18 @@ import os
 import re
 import time
 
-
 class configgerer():
 
     def connect(self, configURL, ip):
         self.configURL = configURL
         self.ip = ip
-        p = webdriver.FirefoxProfile()
-        #p.set_preference('webdriver.log.file','/tmp/firefox_console')
+      
+  p = webdriver.FirefoxProfile()
+        p.set_preference('webdriver.log.file','/tmp/firefox_console')
         self.driver = webdriver.Firefox(p)
         self.driver.get(self.configURL)
 
-    def disconnect(self):
+zxv    def disconnect(self):
         self.driver.quit()
 
     def getMac(self):
@@ -155,10 +155,6 @@ class configgerer():
         commitFieldElement = WebDriverWait(driver, 10).until(lambda driver: driver.find_element_by_xpath(commitFieldXpath))
         commitFieldElement.click()
 
-
-
-
-
 class databaser():
     def readFile(self):
        self.book = {}
@@ -183,8 +179,6 @@ class logger():
     def writeToLog(self):
         self.log['MAC']
 
-
-
 #class portListener(threading.Thread):
 
 def run(ip, db):
@@ -201,7 +195,7 @@ def run(ip, db):
             print("........ Retrying ......... ")
         try:            
 
-            print("++++++++ " + ip + " : " + firmware + " ++++++++ Uploading Configuration")
+            print("++++++++ " + ip + " : " + firmware + "++++++++ Uploading Configuration")
             if firmware != "v1.1.0 build 1086-20150421-new-feature":
                 print("XXXXXXXX " + ip + " FIRMWARE FAIL!!!")
                 break
@@ -222,7 +216,7 @@ def run(ip, db):
             MAC = device2.getMac()
             devinfo = db.getDevice(MAC)
 
-            print("++++++++ " + ip + " : " + MAC + " ++++++++ Setting Settings")
+            print("++++++++ " + ip + " : " + MAC + "++++++++ Setting Settings")
 
                     # Hostname & Description
             device2.setHostname(devinfo["HOSTNAME"], devinfo["DESCRIPTION"])
@@ -242,9 +236,6 @@ def run(ip, db):
             print("XXXXXXXX  " + ip + " SETTINGS FAIL!!!")
             break
             #i = True
-
-
-
 
 def main():
     IPs = ["10.254.0.3","10.254.0.19","10.254.0.35","10.254.0.51","10.254.0.67","10.254.0.83","10.254.0.99","10.254.4.3","10.254.4.19","10.254.4.35","10.254.4.51","10.254.4.67"]    
