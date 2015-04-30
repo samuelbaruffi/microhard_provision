@@ -198,7 +198,8 @@ def run(ip, db):
             device.connect(configURL, ip)
             firmware = device.getFirmware()
         except:
-            print("........ Retrying ......... ")
+            print("........ " + ip + " ......... Retrying ........")
+            pass
         try:            
 
             print("++++++++ " + ip + " : " + firmware + " ++++++++ Uploading Configuration")
@@ -212,7 +213,7 @@ def run(ip, db):
 
             device.disconnect()
         except:
-            print("XXXXXXXX " + ip + " CONFIGURATION FAIL!!!")
+            print("XXXXXXXX " + ip + " CONFIGURATION FAIL")
             break
         try:
             configURL = 'http://admin:!Cm@fW5102@' + ip + ':8081/'
@@ -239,7 +240,7 @@ def run(ip, db):
             print("------------------------------------------------------------------------------")
             break
         except:
-            print("XXXXXXXX  " + ip + " SETTINGS FAIL!!!")
+            print("XXXXXXXX  " + ip + " SETTINGS FAIL")
             break
             #i = True
 
